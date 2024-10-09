@@ -47,7 +47,7 @@ public class ProcessManager {
     public String prettyPrint() {
         StringBuilder sb = new StringBuilder();
         sb.append("ProcessManager\n");
-        stacks.forEach(stack -> sb.append(stack.toString() + "\n"));
+        stacks.forEach(stack -> sb.append(stack.toString()).append("\n"));
         return sb.toString();
     }
 
