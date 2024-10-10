@@ -20,6 +20,9 @@ public class ProcessStack implements Comparable<ProcessStack> {
     private final String name;
     private final List<Process> processesStack = new ArrayList<>();
 
+    @Getter
+    private int fullLength = 0;
+
     @Contract(pure = true)
     public Stream<Process> getProcessesStream() {
         return processesStack.stream();
@@ -28,23 +31,21 @@ public class ProcessStack implements Comparable<ProcessStack> {
     @Contract
     public void addProcess(Process process) {
         processesStack.add(process);
+        fullLength += process.getMaxLength();
     }
 
     @Contract
     public void removeProcess(Process process) {
         processesStack.remove(process);
+        fullLength -= process.getMaxLength();
     }
 
     @Contract
     public void removeProcess(@Range(from = 0, to = Integer.MAX_VALUE) int index) {
-        processesStack.remove(index);
-    }
+        Process process = processesStack.remove(index);
+        fullLength -= process.getMaxLength();
 
-    @Contract(pure = true)
-    public int getFullLength() {
-        return processesStack.stream().mapToInt(Process::getMaxLength).sum() ;
     }
-
 
     @Override
     public int compareTo(@NotNull ProcessStack o) {
