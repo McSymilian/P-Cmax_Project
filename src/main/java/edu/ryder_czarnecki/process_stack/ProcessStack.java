@@ -31,19 +31,19 @@ public class ProcessStack implements Comparable<ProcessStack> {
     @Contract
     public void addProcess(Process process) {
         processesStack.add(process);
-        fullLength += process.getMaxLength();
+        fullLength += process.maxLength();
     }
 
     @Contract
     public void removeProcess(Process process) {
         processesStack.remove(process);
-        fullLength -= process.getMaxLength();
+        fullLength -= process.maxLength();
     }
 
     @Contract
     public void removeProcess(@Range(from = 0, to = Integer.MAX_VALUE) int index) {
         Process process = processesStack.remove(index);
-        fullLength -= process.getMaxLength();
+        fullLength -= process.maxLength();
 
     }
 
@@ -70,6 +70,6 @@ public class ProcessStack implements Comparable<ProcessStack> {
 
     @Override
     public String toString() {
-        return "Stack " + name + ": " + processesStack.stream().map(Process::getMaxLength).toList();
+        return "Stack " + name + ": " + processesStack.stream().map(Process::maxLength).toList();
     }
 }

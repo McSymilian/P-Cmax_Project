@@ -1,25 +1,29 @@
 package edu.ryder_czarnecki;
 
-import edu.ryder_czarnecki.process.Process;
+import edu.ryder_czarnecki.data_input.DataInput;
+import edu.ryder_czarnecki.data_input.InstanceInputException;
+import edu.ryder_czarnecki.data_input.StandardDataInput;
+import edu.ryder_czarnecki.instance.DataInstance;
 import edu.ryder_czarnecki.process_manager.ProcessManager;
 import lombok.extern.java.Log;
-
-import java.util.List;
 
 @Log
 public class Main {
     public static void main(String[] args) {
-        List<Integer> input = List.of(4, 3, 4, 4, 2, 1, 1);
+        DataInput input = new StandardDataInput();
+        DataInstance instance = null;
+        try {
+            instance = input.parse(System.in);
+        } catch (InstanceInputException e) {
+            log.warning("Unable to parse data input");
+            System.exit(1);
+        }
 
         ProcessManager processManager = ProcessManager
                 .builder()
-                .processorsCount(3)
+                .processorsCount(instance.processorsCount())
                 .build()
-                .addProcesses(input
-                        .stream()
-                        .map(Process::new)
-                        .toList()
-                );
+                .addProcesses(instance.processList());
 
         int res = processManager.getCMax();
 
