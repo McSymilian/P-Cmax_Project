@@ -8,11 +8,11 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 class ProcessManagerTest {
-    private ProcessManager processManager;
+    private GreedyProcessManager processManager;
 
     @BeforeEach
     void setUp() {
-        processManager = ProcessManager.builder().processorsCount(3).build();
+        processManager = GreedyProcessManager.builder().processorsCount(3).build();
     }
 
     @Test

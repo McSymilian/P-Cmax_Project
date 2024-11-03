@@ -4,7 +4,6 @@ import edu.ryder_czarnecki.instance.DataInstance;
 
 import java.io.InputStream;
 
-public interface DataInput {
+public interface InputStrategy {
     DataInstance parse(InputStream inputStream) throws InstanceInputException;
-
 }

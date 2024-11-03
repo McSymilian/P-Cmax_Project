@@ -1,0 +1,57 @@
+package edu.ryder_czarnecki.process_manager;
+
+import edu.ryder_czarnecki.process_stack.DefaultProcessStackBuilder;
+import edu.ryder_czarnecki.process_stack.ProcessStack;
+import edu.ryder_czarnecki.process_stack.ProcessStackBuilder;
+import edu.ryder_czarnecki.process.Process;
+import lombok.Builder;
+import lombok.ToString;
+import org.jetbrains.annotations.Range;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@ToString
+public class GreedyProcessManager implements ProcessManager {
+    private final List<ProcessStack> stacks = new ArrayList<>();
+
+    @Builder
+    private GreedyProcessManager(@Range(from = 1, to = Integer.MAX_VALUE) int processorsCount) {
+        this(processorsCount, DefaultProcessStackBuilder.create());
+    }
+
+    private GreedyProcessManager(@Range(from = 1, to = Integer.MAX_VALUE) int processorsCount, ProcessStackBuilder processStackBuilder) {
+        for(int i = 0; i < processorsCount; i++)
+            stacks.add(processStackBuilder.build());
+
+    }
+
+    @Override
+    public int getCMax() {
+        return stacks.stream()
+                .mapToInt(ProcessStack::getFullLength)
+                .max()
+                .orElseThrow(EmptyProcessorStackListException::new);
+    }
+
+    @Override
+    public ProcessManager addProcesses(List<Process> processes) {
+        processes.forEach(process -> shortestStack(stacks).addProcess(process));
+        return this;
+    }
+
+    private static ProcessStack shortestStack(List<ProcessStack> stacks) {
+        return stacks.stream()
+                .min((ProcessStack::compareTo))
+                .orElseThrow(EmptyProcessorStackListException::new);
+    }
+
+    @Override
+    public String prettyPrint() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("ProcessManager\n");
+        stacks.forEach(stack -> sb.append(stack.toString()).append("\n"));
+        return sb.toString();
+    }
+
+}

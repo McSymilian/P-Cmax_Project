@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-public class StandardDataInput implements DataInput {
+public class StandardInputStrategy implements InputStrategy {
 
     @Override
     public DataInstance parse(InputStream stream) throws InstanceInputException {
