@@ -1,16 +1,10 @@
 package edu.ryder_czarnecki;
 
-import edu.ryder_czarnecki.data_input.InputStrategy;
-import edu.ryder_czarnecki.data_input.InstanceInputException;
-import edu.ryder_czarnecki.data_input.StandardInputStrategy;
 import edu.ryder_czarnecki.generator.Engine;
 import edu.ryder_czarnecki.generator.GenerationalSetup;
-import edu.ryder_czarnecki.instance.DataInstance;
 import edu.ryder_czarnecki.process_manager.GreedyProcessManager;
-import edu.ryder_czarnecki.process_manager.ProcessManager;
 import lombok.extern.java.Log;
 
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 @Log
