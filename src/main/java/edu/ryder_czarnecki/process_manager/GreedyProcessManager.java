@@ -5,15 +5,17 @@ import edu.ryder_czarnecki.process_stack.ProcessStack;
 import edu.ryder_czarnecki.process_stack.ProcessStackBuilder;
 import edu.ryder_czarnecki.process.Process;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.ToString;
 import org.jetbrains.annotations.Range;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 @ToString
 public class GreedyProcessManager implements ProcessManager {
-    private final List<ProcessStack> stacks = new ArrayList<>();
+    private final List<ProcessStack> processStacks = new ArrayList<>();
 
     @Builder
     private GreedyProcessManager(@Range(from = 1, to = Integer.MAX_VALUE) int processorsCount) {
@@ -22,13 +24,13 @@ public class GreedyProcessManager implements ProcessManager {
 
     private GreedyProcessManager(@Range(from = 1, to = Integer.MAX_VALUE) int processorsCount, ProcessStackBuilder processStackBuilder) {
         for(int i = 0; i < processorsCount; i++)
-            stacks.add(processStackBuilder.build());
+            processStacks.add(processStackBuilder.build());
 
     }
 
     @Override
     public int getCMax() {
-        return stacks.stream()
+        return processStacks.stream()
                 .mapToInt(ProcessStack::getFullLength)
                 .max()
                 .orElseThrow(EmptyProcessorStackListException::new);
@@ -36,7 +38,7 @@ public class GreedyProcessManager implements ProcessManager {
 
     @Override
     public ProcessManager addProcesses(List<Process> processes) {
-        processes.forEach(process -> shortestStack(stacks).addProcess(process));
+        processes.forEach(process -> shortestStack(processStacks).addProcess(process));
         return this;
     }
 
@@ -48,10 +50,7 @@ public class GreedyProcessManager implements ProcessManager {
 
     @Override
     public String prettyPrint() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("ProcessManager\n");
-        stacks.forEach(stack -> sb.append(stack.toString()).append("\n"));
-        return sb.toString();
+        return ProcessManager.prettyPrint(processStacks);
     }
 
 }
