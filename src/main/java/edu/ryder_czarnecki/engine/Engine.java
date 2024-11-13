@@ -1,4 +1,4 @@
-package edu.ryder_czarnecki.generator;
+package edu.ryder_czarnecki.engine;
 
 import edu.ryder_czarnecki.data_input.InputStrategy;
 import edu.ryder_czarnecki.data_input.StandardInputStrategy;
@@ -30,16 +30,18 @@ public class Engine implements ProcessManagerOutput {
 
     private final AtomicInteger minCmax = new AtomicInteger(Integer.MAX_VALUE);
     private final AtomicReference<ResultInstance> resultInstance = new AtomicReference<>();
+    private final ThreadFactory threadFactory;
 
     @SneakyThrows
     @Builder
-    public Engine(InputStream stream, InputStrategy strategy, ProcessManagerFactory processManagerFactory, GenerationalSetup generationalSetup) {
+    public Engine(InputStream stream, InputStrategy strategy, ProcessManagerFactory processManagerFactory, GenerationalSetup generationalSetup, ThreadFactory threadFactory) {
         inputInstance = strategy.parse(stream);
         this.processManagerFactory = processManagerFactory;
         this.generationalSetup = generationalSetup;
+        this.threadFactory = threadFactory;
     }
 
-    public ResultInstance mashupAnalyze(ThreadFactory threadFactory) {
+    public ResultInstance mashupAnalyze() {
         long begin = System.nanoTime();
 
         for (int i = 0; i < generationalSetup.getMaxGenerations(); i++) {
@@ -61,7 +63,6 @@ public class Engine implements ProcessManagerOutput {
                                     .cMax(processManager.getCMax())
                                     .build()
                             );
-
                         }
                     }
 

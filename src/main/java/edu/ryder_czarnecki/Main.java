@@ -1,20 +1,23 @@
 package edu.ryder_czarnecki;
 
-import edu.ryder_czarnecki.generator.Engine;
-import edu.ryder_czarnecki.generator.GenerationalSetup;
+import edu.ryder_czarnecki.data_input.RandomInputStream;
+import edu.ryder_czarnecki.engine.Engine;
+import edu.ryder_czarnecki.engine.GenerationalSetup;
 import edu.ryder_czarnecki.instance.ResultInstance;
 import edu.ryder_czarnecki.process_manager.GreedyProcessManager;
 import edu.ryder_czarnecki.process_manager.ProcessManager;
 import lombok.extern.java.Log;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.concurrent.TimeUnit;
 
 @Log
 public class Main {
 
-    public static final String FILE_ENDPOINT = "https://ekursy.put.poznan.pl/pluginfile.php/1690125/mod_resource/content/1/m30.txt";
-
-    public static void main(String[] args) {
+    private static final String FILE_ENDPOINT = "https://ekursy.put.poznan.pl/pluginfile.php/1690125/mod_resource/content/1/m30.txt";
+    private static final File inputA = new File("instance2_nasze.txt");
+    public static void main(String[] args) throws FileNotFoundException {
         ResultInstance result = Engine.builder()
                 .processManagerFactory(
                         processorsCount -> GreedyProcessManager
@@ -22,20 +25,22 @@ public class Main {
                                 .processorsCount(processorsCount)
                                 .build()
                 )
-                .stream(System.in)
+//                .stream(new FileInputStream(inputA))
+                .stream(new RandomInputStream().getInputStream())
                 .strategy(Engine.SEQUENTIAL_INPUT)
                 .generationalSetup(GenerationalSetup
                         .builder()
-                        .generationSize(20)
-                        .maxGenerations(20)
-                        .crossoverProbability(0.2)
-                        .mutationProbability(0.2)
-                        .maxGenerationTime(1000)
+                        .generationSize(100_000)
+                        .maxGenerations(1)
+                        .crossoverProbabilityPercent(20)
+                        .minimalSimilarity(0.2)
+                        .maxGenerationTime(10)
                         .maxGenerationTimeUnit(TimeUnit.SECONDS)
                         .build()
                 )
+                .threadFactory(Thread.ofVirtual().factory())
                 .build()
-                .mashupAnalyze(Thread.ofVirtual().factory());
+                .mashupAnalyze();
 
         String resultPrint = new StringBuilder()
                 .append("\n")
@@ -46,7 +51,7 @@ public class Main {
                 .append(result.getEvaluationTime() / 10E9)
                 .append("s")
                 .append("\n")
-                .append(ProcessManager.prettyPrint(result.getProcessStacks()))
+//                .append(ProcessManager.prettyPrint(result.getProcessStacks()))
                 .toString();
         log.info(resultPrint);
     }
