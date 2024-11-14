@@ -20,7 +20,9 @@ public class Crossover {
         int max = (int) (mother.size() * intensity);
         int min =  mother.size() - max;
         int n;
-        if(min < max)
+        if (min == max)
+            n = min;
+        else if(min < max)
             n = random.nextInt(min, max);
         else
             n = random.nextInt(max, min);
