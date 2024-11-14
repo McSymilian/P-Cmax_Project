@@ -29,7 +29,6 @@ class CrossoverTest {
                 0.8
         ));
 
-
         assertEquals(motherCount, crossover.processList().size());
         assertEquals(fatherCount, crossover.processList().size());
         assertEquals(fatherCount, father.processList().size());
@@ -49,7 +48,6 @@ class CrossoverTest {
                 father.processList(),
                 0.8
         ));
-
 
         assertEquals(motherCount, crossover.processList().size());
         assertEquals(fatherCount, crossover.processList().size());
