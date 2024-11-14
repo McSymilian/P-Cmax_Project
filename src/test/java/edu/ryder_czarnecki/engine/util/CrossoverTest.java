@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class CrossoverTest {
 
     @Test
-    void crossover() throws InstanceInputException {
+    void crossoverRandom() throws InstanceInputException {
         InputStrategy strategy = new StandardInputStrategy();
         DataInstance mother = strategy.parse(new RandomInputStream().getInputStream());
         DataInstance father = new DeepCopy().copy(mother);
