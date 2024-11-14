@@ -1,6 +1,6 @@
 package edu.ryder_czarnecki.engine.util;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -26,7 +26,7 @@ public class Crossover {
             n = random.nextInt(min, max);
         else
             n = random.nextInt(max, min);
-        Set<Box> crossed = new HashSet<>(mother.subList(0, n).stream().map(Box::new).toList());
+        Set<Box> crossed = new LinkedHashSet<>(mother.subList(0, n).stream().map(Box::new).toList());
 
         crossed.addAll(father.stream().map(Box::new).toList());
 
