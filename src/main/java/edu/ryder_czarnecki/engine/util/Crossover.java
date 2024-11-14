@@ -1,14 +1,22 @@
 package edu.ryder_czarnecki.engine.util;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import edu.ryder_czarnecki.process.Process;
+import lombok.AllArgsConstructor;
+import org.jetbrains.annotations.Range;
 
 public class Crossover {
     private static final Random random = new Random(System.nanoTime());
-    public List<Process> crossover(List<Process> mother, List<Process> father, double intensity) {
+
+    public List<Process> crossover(
+            List<Process> mother,
+            List<Process> father,
+            @Range(from = 0, to = 1) double intensity
+    ) {
         int max = (int) (mother.size() * intensity);
         int min =  mother.size() - max;
         int n;
@@ -16,12 +24,29 @@ public class Crossover {
             n = random.nextInt(min, max);
         else
             n = random.nextInt(max, min);
-        List<Process> crossed = new ArrayList<>(mother.subList(0, n));
+        Set<Box> crossed = new HashSet<>(mother.subList(0, n).stream().map(Box::new).toList());
 
-        for (Process p : father)
-            if (crossed.stream().noneMatch(it -> p == it))
-                crossed.add(p);
+        crossed.addAll(father.stream().map(Box::new).toList());
 
-        return crossed;
+        return crossed.parallelStream().map(it -> it.process).toList();
+    }
+
+    @AllArgsConstructor
+    private static class Box {
+        private Process process;
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o instanceof Box box)
+                return process == box.process;
+
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return process.hashCode();
+        }
     }
 }
