@@ -23,7 +23,7 @@ class CrossoverTest {
         int motherCount = mother.processList().size();
         int fatherCount = father.processList().size();
 
-        DataInstance crossover = new DataInstance(fatherCount, new Crossover().crossover(
+        DataInstance crossover = new DataInstance(fatherCount, Crossover.crossover(
                 mother.processList(),
                 father.processList(),
                 0.8
@@ -43,7 +43,7 @@ class CrossoverTest {
         int motherCount = mother.processList().size();
         int fatherCount = father.processList().size();
 
-        DataInstance crossover = new DataInstance(fatherCount, new Crossover().crossover(
+        DataInstance crossover = new DataInstance(fatherCount, Crossover.crossover(
                 mother.processList(),
                 father.processList(),
                 0.8
@@ -54,6 +54,4 @@ class CrossoverTest {
         assertEquals(fatherCount, father.processList().size());
         assertEquals(motherCount, mother.processList().size());
     }
-
-
 }

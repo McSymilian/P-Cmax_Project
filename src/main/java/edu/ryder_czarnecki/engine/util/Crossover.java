@@ -10,9 +10,13 @@ import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.Range;
 
 public class Crossover {
+    private Crossover() {
+        throw new IllegalStateException("Utility class");
+    }
+
     private static final Random random = new Random(System.nanoTime());
 
-    public List<Process> crossover(
+    public static List<Process> crossover(
             List<Process> mother,
             List<Process> father,
             @Range(from = 0, to = 1) double intensity
