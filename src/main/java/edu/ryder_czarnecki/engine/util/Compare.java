@@ -2,7 +2,7 @@ package edu.ryder_czarnecki.engine.util;
 
 import java.util.List;
 
-import edu.ryder_czarnecki.process.Process;
+import edu.ryder_czarnecki.process.ProcessInstance;
 
 public class Compare {
     private Compare() {
@@ -10,8 +10,8 @@ public class Compare {
     }
 
     public static double compare(
-            List<Process> list1,
-            List<Process> list2
+            final List<ProcessInstance> list1,
+            final List<ProcessInstance> list2
     ) {
         double total = list1.size();
         double matching = 0;

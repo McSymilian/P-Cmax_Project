@@ -3,7 +3,7 @@ package edu.ryder_czarnecki.process_manager;
 import edu.ryder_czarnecki.process_stack.DefaultProcessStackBuilder;
 import edu.ryder_czarnecki.process_stack.ProcessStack;
 import edu.ryder_czarnecki.process_stack.ProcessStackBuilder;
-import edu.ryder_czarnecki.process.Process;
+import edu.ryder_czarnecki.process.ProcessInstance;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -37,7 +37,7 @@ public class GreedyProcessManager implements ProcessManager {
     }
 
     @Override
-    public ProcessManager addProcesses(List<Process> processes) {
+    public ProcessManager addProcesses(List<ProcessInstance> processes) {
         processes.forEach(process -> shortestStack(processStacks).addProcess(process));
         return this;
     }

@@ -4,7 +4,7 @@ import edu.ryder_czarnecki.data_input.InputStrategy;
 import edu.ryder_czarnecki.data_input.StandardInputStrategy;
 import edu.ryder_czarnecki.instance.DataInstance;
 import edu.ryder_czarnecki.instance.ResultInstance;
-import edu.ryder_czarnecki.process.Process;
+import edu.ryder_czarnecki.process.ProcessInstance;
 import edu.ryder_czarnecki.process_manager.ProcessManager;
 import edu.ryder_czarnecki.process_manager.ProcessManagerFactory;
 import edu.ryder_czarnecki.process_manager.ProcessManagerOutput;
@@ -48,7 +48,7 @@ public class Engine implements ProcessManagerOutput {
             CountDownLatch latch = new CountDownLatch(generationalSetup.getGenerationSize());
             for (int j = 0; j < generationalSetup.getGenerationSize(); j++) {
                 threadFactory.newThread(() -> {
-                    List<Process> variation = inputInstance.processList();
+                    List<ProcessInstance> variation = inputInstance.processList();
 
                     ProcessManager processManager = processManagerFactory.create(inputInstance.processorsCount());
                     processManager.addProcesses(variation);
