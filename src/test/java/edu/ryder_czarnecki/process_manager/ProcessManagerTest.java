@@ -1,6 +1,6 @@
 package edu.ryder_czarnecki.process_manager;
 
-import edu.ryder_czarnecki.process.Process;
+import edu.ryder_czarnecki.process.ProcessInstance;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +21,7 @@ class ProcessManagerTest {
                 7,
                 processManager.addProcesses(
                                 Stream.of(4, 3, 4, 4, 2, 1, 1)
-                                        .map(Process::new)
+                                        .map(ProcessInstance::new)
                                         .toList()
                         )
                         .getCMax()
@@ -34,7 +34,7 @@ class ProcessManagerTest {
                 16,
                 processManager.addProcesses(
                                 Stream.of(7, 4, 4, 3, 1, 6, 7, 9)
-                                        .map(Process::new)
+                                        .map(ProcessInstance::new)
                                         .toList()
                         )
                         .getCMax()
@@ -47,7 +47,7 @@ class ProcessManagerTest {
                 6,
                 processManager.addProcesses(
                                 Stream.of(1, 3, 4, 5, 2, 1, 1)
-                                        .map(Process::new)
+                                        .map(ProcessInstance::new)
                                         .toList()
                         )
                         .getCMax()
@@ -60,7 +60,7 @@ class ProcessManagerTest {
                 18,
                 processManager.addProcesses(
                                 Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9)
-                                        .map(Process::new)
+                                        .map(ProcessInstance::new)
                                         .toList()
                         )
                         .getCMax()

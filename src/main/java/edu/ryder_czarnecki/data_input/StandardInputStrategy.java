@@ -1,7 +1,7 @@
 package edu.ryder_czarnecki.data_input;
 
 import edu.ryder_czarnecki.instance.DataInstance;
-import edu.ryder_czarnecki.process.Process;
+import edu.ryder_czarnecki.process.ProcessInstance;
 import lombok.extern.java.Log;
 
 import java.io.InputStream;
@@ -15,7 +15,7 @@ public class StandardInputStrategy implements InputStrategy {
     @Override
     public DataInstance parse(InputStream stream) throws InstanceInputException {
         int processorsCount;
-        List<Process> processList;
+        List<ProcessInstance> processList;
         try {
             Scanner sc = new Scanner(stream);
             processorsCount = sc.nextInt();
@@ -25,7 +25,7 @@ public class StandardInputStrategy implements InputStrategy {
             processList = new ArrayList<>(size);
             for (int i = 0; i < size; i++) {
                 int time = sc.nextInt();
-                processList.add(new Process(time));
+                processList.add(new ProcessInstance(time));
             }
         } catch (NoSuchElementException | IllegalStateException e) {
             throw new InstanceInputException(e.getMessage());
