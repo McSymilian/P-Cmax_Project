@@ -1,11 +1,9 @@
 package edu.ryder_czarnecki;
 
-import edu.ryder_czarnecki.data_input.RandomInputStream;
 import edu.ryder_czarnecki.engine.Engine;
 import edu.ryder_czarnecki.engine.GenerationalSetup;
 import edu.ryder_czarnecki.instance.ResultInstance;
 import edu.ryder_czarnecki.process_manager.GreedyProcessManager;
-import edu.ryder_czarnecki.process_manager.ProcessManager;
 import lombok.extern.java.Log;
 
 import java.io.File;

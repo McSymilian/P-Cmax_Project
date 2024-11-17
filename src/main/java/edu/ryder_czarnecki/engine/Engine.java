@@ -22,7 +22,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static edu.ryder_czarnecki.engine.util.Compare.compare;
 import static edu.ryder_czarnecki.engine.util.Crossover.crossover;
 import static edu.ryder_czarnecki.engine.util.Mutate.mutate;
 import static edu.ryder_czarnecki.engine.util.Permute.permute;
