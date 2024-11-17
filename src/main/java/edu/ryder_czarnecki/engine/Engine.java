@@ -59,32 +59,28 @@ public class Engine implements ProcessManagerOutput {
         final int randomPart = (int) (generationalSetup.randomPart() * generationalSetup.generationSize());
         AtomicReference<List<TemporalInstance>> previousGenerations = new AtomicReference<>(new ArrayList<>());
 
-        long begin = System.nanoTime();
         final int maxGenerations = generationalSetup.maxGenerations();
         final int generationSize = generationalSetup.generationSize();
+
+        final int significantGenerations = maxGenerations / 10;
+
+        long begin = System.nanoTime();
         for (int i = 0; i < maxGenerations; i++) {
             final int finalI = i;
             CountDownLatch latch = new CountDownLatch(generationalSetup.generationSize());
             for (int j = 0; j < generationSize; j++) {
                 final int finalJ = j;
                 threadFactory.newThread(() -> {
-                    List<ProcessInstance> variation;
-                    if (finalI == 0) {
-                        variation = permute(inputInstance.processList());
-                    } else if (finalJ < mutationPart) {
-                        variation = mutate(
-                                previousGenerations.get().get(finalJ).processList(),
-                                generationalSetup.mutationIntensity()
-                        );
-                    } else if (finalJ < mutationPart + randomPart) {
-                        variation = permute(inputInstance.processList());
-                    } else {
-                        variation = crossover(
-                                previousGenerations.get().get(finalJ).processList(),
-                                previousGenerations.get().get(generationSize - finalJ).processList(),
-                                generationalSetup.crossoverIntensity()
-                        );
-                    }
+                    List<ProcessInstance> variation = getPermutation(
+                            finalI,
+                            finalJ,
+                            mutationPart,
+                            previousGenerations,
+                            randomPart,
+                            generationSize,
+                            inputInstance,
+                            generationalSetup
+                    );
 
                     ProcessManager processManager = processManagerFactory.create(inputInstance.processorsCount());
                     processManager.addProcesses(variation);
@@ -103,12 +99,20 @@ public class Engine implements ProcessManagerOutput {
 
             previousGenerations.set(new ArrayList<>(previousGenerations
                     .get()
-                    .stream()
+                    .parallelStream()
                     .sorted(Comparator.comparingInt(TemporalInstance::cMax))
                     .limit(generationSize)
                     .toList()));
 
-            log.info("Generation " + i + " finished\n" + previousGenerations.get().size() + " instances in next generation\nSmallest CMax: " + previousGenerations.get().getFirst().cMax());
+            if(finalI % significantGenerations == 0)
+                log.info("Generation %d finished\nSmallest CMax: %d\nPassed time: %fs"
+                        .formatted(
+                                i,
+                                previousGenerations.get().getFirst().cMax(),
+                                (System.nanoTime() - begin) / 10E9
+                        )
+                );
+
         }
 
         evaluationTime = System.nanoTime() - begin;
@@ -123,6 +127,35 @@ public class Engine implements ProcessManagerOutput {
                 .build();
 
         return resultInstance;
+    }
+
+    private static List<ProcessInstance> getPermutation(
+            int finalI,
+            int finalJ,
+            int mutationPart,
+            AtomicReference<List<TemporalInstance>> previousGenerations,
+            int randomPart,
+            int generationSize,
+            DataInstance inputInstance,
+            GenerationalSetup generationalSetup
+    ) {
+        if (finalI == 0)
+            return permute(inputInstance.processList());
+
+        if (finalJ < mutationPart)
+            return  mutate(
+                    previousGenerations.get().get(finalJ).processList(),
+                    generationalSetup.mutationIntensity()
+            );
+
+        if (finalJ < mutationPart + randomPart)
+            return permute(inputInstance.processList());
+
+        return crossover(
+                previousGenerations.get().get(finalJ - mutationPart - randomPart).processList(),
+                previousGenerations.get().get(generationSize - finalJ).processList(),
+                generationalSetup.crossoverIntensity()
+        );
     }
 
     @Override

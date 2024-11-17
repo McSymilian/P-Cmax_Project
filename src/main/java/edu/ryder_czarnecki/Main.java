@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 public class Main {
 
     private static final String FILE_ENDPOINT = "https://ekursy.put.poznan.pl/pluginfile.php/1690125/mod_resource/content/1/m30.txt";
-    private static final File inputA = new File("m50n1000.txt");
+    private static final File inputA = new File("m50n200.txt");
 
     public static void main(String[] args) throws FileNotFoundException {
         ResultInstance result = Engine.builder()
@@ -25,23 +25,24 @@ public class Main {
                                 .processorsCount(processorsCount)
                                 .build()
                 )
+//                .stream(System.in)
                 .stream(new FileInputStream(inputA))
 //                .stream(new RandomInputStream().getInputStream())
                 .strategy(Engine.SEQUENTIAL_INPUT)
                 .generationalSetup(new GenerationalSetup(
-                        10_000,
                         1_000,
+                        1_000,
+                        0.02,
+                        0.48,
                         0.2,
-                        0.8,
-                        0.2,
-                        0.4,
-                        0.5,
-                        10,
+                        0.3,
+                        0.6,
+                        2,
                         TimeUnit.SECONDS
                 )
                 )
-                .threadFactory(Thread.ofPlatform().factory())
-//                .threadFactory(Thread.ofVirtual().factory())
+//                .threadFactory(Thread.ofPlatform().factory())
+                .threadFactory(Thread.ofVirtual().factory())
                 .build()
                 .mashupAnalyze();
 
