@@ -9,6 +9,7 @@ import edu.ryder_czarnecki.process_manager.ProcessManager;
 import lombok.extern.java.Log;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.concurrent.TimeUnit;
 
@@ -16,7 +17,8 @@ import java.util.concurrent.TimeUnit;
 public class Main {
 
     private static final String FILE_ENDPOINT = "https://ekursy.put.poznan.pl/pluginfile.php/1690125/mod_resource/content/1/m30.txt";
-    private static final File inputA = new File("instance2_nasze.txt");
+    private static final File inputA = new File("m50n1000.txt");
+
     public static void main(String[] args) throws FileNotFoundException {
         ResultInstance result = Engine.builder()
                 .processManagerFactory(
@@ -25,20 +27,23 @@ public class Main {
                                 .processorsCount(processorsCount)
                                 .build()
                 )
-//                .stream(new FileInputStream(inputA))
-                .stream(new RandomInputStream().getInputStream())
+                .stream(new FileInputStream(inputA))
+//                .stream(new RandomInputStream().getInputStream())
                 .strategy(Engine.SEQUENTIAL_INPUT)
-                .generationalSetup(GenerationalSetup
-                        .builder()
-                        .generationSize(100_000)
-                        .maxGenerations(1)
-                        .crossoverProbabilityPercent(20)
-                        .minimalSimilarity(0.2)
-                        .maxGenerationTime(10)
-                        .maxGenerationTimeUnit(TimeUnit.SECONDS)
-                        .build()
+                .generationalSetup(new GenerationalSetup(
+                        10_000,
+                        1_000,
+                        0.2,
+                        0.8,
+                        0.2,
+                        0.4,
+                        0.5,
+                        10,
+                        TimeUnit.SECONDS
                 )
-                .threadFactory(Thread.ofVirtual().factory())
+                )
+                .threadFactory(Thread.ofPlatform().factory())
+//                .threadFactory(Thread.ofVirtual().factory())
                 .build()
                 .mashupAnalyze();
 

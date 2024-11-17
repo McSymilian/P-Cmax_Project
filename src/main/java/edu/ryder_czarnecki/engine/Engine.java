@@ -2,6 +2,7 @@ package edu.ryder_czarnecki.engine;
 
 import edu.ryder_czarnecki.data_input.InputStrategy;
 import edu.ryder_czarnecki.data_input.StandardInputStrategy;
+import edu.ryder_czarnecki.engine.util.TemporalInstance;
 import edu.ryder_czarnecki.instance.DataInstance;
 import edu.ryder_czarnecki.instance.ResultInstance;
 import edu.ryder_czarnecki.process.ProcessInstance;
@@ -11,14 +12,22 @@ import edu.ryder_czarnecki.process_manager.ProcessManagerOutput;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import lombok.extern.java.Log;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static edu.ryder_czarnecki.engine.util.Compare.compare;
+import static edu.ryder_czarnecki.engine.util.Crossover.crossover;
+import static edu.ryder_czarnecki.engine.util.Mutate.mutate;
+import static edu.ryder_czarnecki.engine.util.Permute.permute;
+
+@Log
 public class Engine implements ProcessManagerOutput {
     public static final InputStrategy SEQUENTIAL_INPUT = new StandardInputStrategy();
 
@@ -28,13 +37,18 @@ public class Engine implements ProcessManagerOutput {
     @Getter
     private Long evaluationTime = 0L;
 
-    private final AtomicInteger minCmax = new AtomicInteger(Integer.MAX_VALUE);
-    private final AtomicReference<ResultInstance> resultInstance = new AtomicReference<>();
+    private ResultInstance resultInstance;
     private final ThreadFactory threadFactory;
 
     @SneakyThrows
     @Builder
-    public Engine(InputStream stream, InputStrategy strategy, ProcessManagerFactory processManagerFactory, GenerationalSetup generationalSetup, ThreadFactory threadFactory) {
+    public Engine(
+            InputStream stream,
+            InputStrategy strategy,
+            ProcessManagerFactory processManagerFactory,
+            GenerationalSetup generationalSetup,
+            ThreadFactory threadFactory
+    ) {
         inputInstance = strategy.parse(stream);
         this.processManagerFactory = processManagerFactory;
         this.generationalSetup = generationalSetup;
@@ -42,50 +56,83 @@ public class Engine implements ProcessManagerOutput {
     }
 
     public ResultInstance mashupAnalyze() {
-        long begin = System.nanoTime();
+        final int mutationPart = (int) (generationalSetup.mutationPart() * generationalSetup.generationSize());
+        final int randomPart = (int) (generationalSetup.randomPart() * generationalSetup.generationSize());
+        AtomicReference<List<TemporalInstance>> previousGenerations = new AtomicReference<>(new ArrayList<>());
 
-        for (int i = 0; i < generationalSetup.getMaxGenerations(); i++) {
-            CountDownLatch latch = new CountDownLatch(generationalSetup.getGenerationSize());
-            for (int j = 0; j < generationalSetup.getGenerationSize(); j++) {
+        long begin = System.nanoTime();
+        final int maxGenerations = generationalSetup.maxGenerations();
+        final int generationSize = generationalSetup.generationSize();
+        for (int i = 0; i < maxGenerations; i++) {
+            final int finalI = i;
+            CountDownLatch latch = new CountDownLatch(generationalSetup.generationSize());
+            for (int j = 0; j < generationSize; j++) {
+                final int finalJ = j;
                 threadFactory.newThread(() -> {
-                    List<ProcessInstance> variation = inputInstance.processList();
+                    List<ProcessInstance> variation;
+                    if (finalI == 0) {
+                        variation = permute(inputInstance.processList());
+                    } else if (finalJ < mutationPart) {
+                        variation = mutate(
+                                previousGenerations.get().get(finalJ).processList(),
+                                generationalSetup.mutationIntensity()
+                        );
+                    } else if (finalJ < mutationPart + randomPart) {
+                        variation = permute(inputInstance.processList());
+                    } else {
+                        variation = crossover(
+                                previousGenerations.get().get(finalJ).processList(),
+                                previousGenerations.get().get(generationSize - finalJ).processList(),
+                                generationalSetup.crossoverIntensity()
+                        );
+                    }
 
                     ProcessManager processManager = processManagerFactory.create(inputInstance.processorsCount());
                     processManager.addProcesses(variation);
-
-                    synchronized (minCmax) {
-                        int cMax = processManager.getCMax();
-                        if (cMax < minCmax.get()) {
-                            minCmax.set(cMax);
-                            resultInstance.set(ResultInstance.builder()
-                                    .evaluationTime(System.nanoTime() - begin)
-                                    .processStacks(processManager.getProcessStacks())
-                                    .cMax(processManager.getCMax())
-                                    .build()
-                            );
-                        }
+                    synchronized (previousGenerations) {
+                        previousGenerations.get().add(new TemporalInstance(processManager.getCMax(), variation));
                     }
-
                     latch.countDown();
                 }).start();
             }
 
             try {
-                latch.await(generationalSetup.getMaxGenerationTime(), generationalSetup.getMaxGenerationTimeUnit());
-            } catch (InterruptedException ignored) {}
+                latch.await(generationalSetup.maxGenerationTime(), generationalSetup.maxGenerationTimeUnit());
+            } catch (InterruptedException ignored) {
+                log.warning("Generation " + i + " was interrupted");
+            }
+
+            previousGenerations.set(new ArrayList<>(previousGenerations
+                    .get()
+                    .stream()
+                    .sorted(Comparator.comparingInt(TemporalInstance::cMax))
+                    .limit(generationSize)
+                    .toList()));
+
+            log.info("Generation " + i + " finished\n" + previousGenerations.get().size() + " instances in next generation\nSmallest CMax: " + previousGenerations.get().getFirst().cMax());
         }
 
         evaluationTime = System.nanoTime() - begin;
-        return resultInstance.get();
+
+        ProcessManager processManager = processManagerFactory.create(inputInstance.processorsCount());
+        processManager.addProcesses(previousGenerations.get().getFirst().processList());
+
+        resultInstance = ResultInstance.builder()
+                .processStacks(processManager.getProcessStacks())
+                .evaluationTime(evaluationTime)
+                .cMax(processManager.getCMax())
+                .build();
+
+        return resultInstance;
     }
 
     @Override
     public int getCMax() {
-        return resultInstance.get().getCMax();
+        return resultInstance.getCMax();
     }
 
     @Override
     public String prettyPrint() {
-        return "Evaluation time: " + evaluationTime + "ns\n" + ProcessManager.prettyPrint(resultInstance.get().getProcessStacks());
+        return "Evaluation time: " + evaluationTime + "ns\n" + ProcessManager.prettyPrint(resultInstance.getProcessStacks());
     }
 }
