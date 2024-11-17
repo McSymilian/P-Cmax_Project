@@ -39,8 +39,7 @@ public class Main {
                         0.6,
                         2,
                         TimeUnit.SECONDS
-                )
-                )
+                ))
 //                .threadFactory(Thread.ofPlatform().factory())
                 .threadFactory(Thread.ofVirtual().factory())
                 .build()
