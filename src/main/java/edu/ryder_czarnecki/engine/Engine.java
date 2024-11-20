@@ -2,6 +2,7 @@ package edu.ryder_czarnecki.engine;
 
 import edu.ryder_czarnecki.data_input.InputStrategy;
 import edu.ryder_czarnecki.data_input.StandardInputStrategy;
+import edu.ryder_czarnecki.engine.generational_setup.GenerationalSetup;
 import edu.ryder_czarnecki.engine.util.TemporalInstance;
 import edu.ryder_czarnecki.instance.DataInstance;
 import edu.ryder_czarnecki.instance.ResultInstance;
