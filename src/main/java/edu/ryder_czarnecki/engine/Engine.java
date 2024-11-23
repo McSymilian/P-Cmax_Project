@@ -57,12 +57,12 @@ public class Engine implements ProcessManagerOutput {
     public ResultInstance mashupAnalyze() {
         final int mutationPart = (int) (generationalSetup.mutationPart() * generationalSetup.generationSize());
         final int randomPart = (int) (generationalSetup.randomPart() * generationalSetup.generationSize());
-        AtomicReference<List<TemporalInstance>> previousGenerations = new AtomicReference<>(new ArrayList<>());
+        final AtomicReference<List<TemporalInstance>> previousGenerations = new AtomicReference<>(new ArrayList<>());
 
         final int maxGenerations = generationalSetup.maxGenerations();
         final int generationSize = generationalSetup.generationSize();
 
-        final int significantGenerations = maxGenerations / 10;
+        final int significantGenerations = (int) (maxGenerations * generationalSetup.notificationFrequency());
 
         long begin = System.nanoTime();
         for (int i = 0; i < maxGenerations; i++) {

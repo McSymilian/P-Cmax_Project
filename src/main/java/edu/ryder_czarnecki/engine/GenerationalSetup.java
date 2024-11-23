@@ -13,6 +13,7 @@ public record GenerationalSetup(
         @Range(from = 0, to = 1) double minimalDiversity,
         @Range(from = 0, to = 1) double mutationPart,
         @Range(from = 0, to = 1) double randomPart,
+        @Range(from = 0, to = 1) double notificationFrequency,
         long maxGenerationTime,
         TimeUnit maxGenerationTimeUnit
 ) {}
