@@ -30,7 +30,7 @@ public class Main {
                 .stream(new FileInputStream(inputA))
 //                .stream(new RandomInputStream().getInputStream())
                 .strategy(Engine.SEQUENTIAL_INPUT)
-                .generationalSetup(FileSourcedGenerationalSetup.createWithFile("generationalSetup1.txt").parseIntoRecord())
+                .generationalSetup(new FileSourcedGenerationalSetup().separator("=").createWithFile("generationalSetup1.txt").parseIntoRecord())
 //                .generationalSetup(CustomGenerationalSetup.builder().maxGenerations(1000).generationSize(1000).mutationIntensity(0.02).crossoverIntensity(0.48).minimalDiversity(0.2).mutationPart(0.3).randomPart(0.6).maxGenerationTime(2).maxGenerationTimeUnit(TimeUnit.SECONDS).build().parseIntoRecord())
 //                .threadFactory(Thread.ofPlatform().factory())
                 .threadFactory(Thread.ofVirtual().factory())

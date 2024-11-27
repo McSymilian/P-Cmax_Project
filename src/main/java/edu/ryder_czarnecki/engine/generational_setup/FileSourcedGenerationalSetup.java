@@ -1,7 +1,5 @@
 package edu.ryder_czarnecki.engine.generational_setup;
 
-
-import lombok.Builder;
 import org.jetbrains.annotations.Range;
 
 import java.io.BufferedReader;
@@ -10,7 +8,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-@Builder
 public class FileSourcedGenerationalSetup{
     int maxGenerations;
     int generationSize;
@@ -21,20 +18,24 @@ public class FileSourcedGenerationalSetup{
     @Range(from = 0, to = 1) double randomPart;
     long maxGenerationTime;
     TimeUnit maxGenerationTimeUnit;
+    String separator;
 
     private static final Set<String> REQUIERD_KEYS = Set.of("maxGenerations", "generationSize", "mutationIntensity", "crossoverIntensity", "minimalDiversity", "mutationPart", "randomPart", "maxGenerationTime", "maxGenerationTimeUnit");
     private static final Set<String> activatedKeys= new HashSet<>();
 
-    public static FileSourcedGenerationalSetup createWithFile(String filePath) {
+    public FileSourcedGenerationalSetup separator(String sep){
+        separator = sep;
+        return this;
+    }
 
-        FileSourcedGenerationalSetupBuilder fundament = FileSourcedGenerationalSetup.builder();
+    public FileSourcedGenerationalSetup createWithFile(String filePath) {
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line, keyWord, value;
 
             while ((line = reader.readLine()) != null) {
                 try {
-                    String[] seperatedLine = line.split("=");
+                    String[] seperatedLine = line.split(separator);
                     if (seperatedLine.length != 2) {
                         throw new IllegalArgumentException("Generational Setup input file invalid format: " + line);
                     }
@@ -44,39 +45,39 @@ public class FileSourcedGenerationalSetup{
 
                     switch (keyWord) {
                         case "maxGenerations" -> {
-                            fundament.maxGenerations = Integer.parseInt(value);
+                            maxGenerations = Integer.parseInt(value);
                             activatedKeys.add(keyWord);
                         }
                         case "generationSize" -> {
-                            fundament.generationSize = Integer.parseInt(value);
+                            generationSize = Integer.parseInt(value);
                             activatedKeys.add(keyWord);
                         }
                         case "mutationIntensity" -> {
-                            fundament.mutationIntensity = Double.parseDouble(value);
+                            mutationIntensity = Double.parseDouble(value);
                             activatedKeys.add(keyWord);
                         }
                         case "crossoverIntensity" -> {
-                            fundament.crossoverIntensity = Double.parseDouble(value);
+                            crossoverIntensity = Double.parseDouble(value);
                             activatedKeys.add(keyWord);
                         }
                         case "minimalDiversity" -> {
-                            fundament.minimalDiversity = Double.parseDouble(value);
+                            minimalDiversity = Double.parseDouble(value);
                             activatedKeys.add(keyWord);
                         }
                         case "mutationPart" -> {
-                            fundament.mutationPart = Double.parseDouble(value);
+                            mutationPart = Double.parseDouble(value);
                             activatedKeys.add(keyWord);
                         }
                         case "randomPart" -> {
-                            fundament.randomPart = Double.parseDouble(value);
+                            randomPart = Double.parseDouble(value);
                             activatedKeys.add(keyWord);
                         }
                         case "maxGenerationTime" -> {
-                            fundament.maxGenerationTime = Long.parseLong(value);
+                            maxGenerationTime = Long.parseLong(value);
                             activatedKeys.add(keyWord);
                         }
                         case "maxGenerationTimeUnit" -> {
-                            fundament.maxGenerationTimeUnit = TimeUnit.valueOf(value);
+                            maxGenerationTimeUnit = TimeUnit.valueOf(value);
                             activatedKeys.add(keyWord);
                         }
                         default -> throw new IllegalArgumentException("Unknown keyword in Generational Setup input file: " + keyWord);
@@ -102,7 +103,7 @@ public class FileSourcedGenerationalSetup{
         } catch (IllegalStateException e){
             System.err.println(e.getMessage());
         }
-    return fundament.build();
+    return this;
     }
 
     public GenerationalSetup parseIntoRecord() {
