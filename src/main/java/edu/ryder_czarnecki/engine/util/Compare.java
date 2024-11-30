@@ -2,7 +2,7 @@ package edu.ryder_czarnecki.engine.util;
 
 import java.util.List;
 
-import edu.ryder_czarnecki.process.ProcessInstance;
+import edu.ryder_czarnecki.process_stack.ProcessStack;
 
 public class Compare {
     private Compare() {
@@ -10,16 +10,13 @@ public class Compare {
     }
 
     public static double compare(
-            final List<ProcessInstance> list1,
-            final List<ProcessInstance> list2
+            List<ProcessStack> base,
+            List<ProcessStack> compared
     ) {
-        double total = list1.size();
-        double matching = 0;
+        double sum = 0;
+        for (int i = 0; i < base.size(); i++)
+            sum += base.get(i).getFullLength() / compared.get(i).getFullLength();
 
-        for (int i = 0; i < total; i++)
-            if (list1.get(i).equals(list2.get(i)))
-                matching++;
-
-        return matching / total;
+        return sum / base.size();
     }
 }
