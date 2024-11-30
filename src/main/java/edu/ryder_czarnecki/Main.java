@@ -1,7 +1,8 @@
 package edu.ryder_czarnecki;
 
 import edu.ryder_czarnecki.engine.Engine;
-import edu.ryder_czarnecki.engine.GenerationalSetup;
+import edu.ryder_czarnecki.engine.generational_setup.FileSourcedGenerationalSetup;
+import edu.ryder_czarnecki.engine.generational_setup.CustomGenerationalSetup;
 import edu.ryder_czarnecki.instance.ResultInstance;
 import edu.ryder_czarnecki.process_manager.GreedyProcessManager;
 import lombok.extern.java.Log;
@@ -29,17 +30,8 @@ public class Main {
                 .stream(new FileInputStream(inputA))
 //                .stream(new RandomInputStream().getInputStream())
                 .strategy(Engine.SEQUENTIAL_INPUT)
-                .generationalSetup(new GenerationalSetup(
-                        1_000,
-                        1_000,
-                        0.02,
-                        0.48,
-                        0.2,
-                        0.3,
-                        0.6,
-                        2,
-                        TimeUnit.SECONDS
-                ))
+                .generationalSetup(new FileSourcedGenerationalSetup().separator("=").createWithFile("generationalSetup1.txt").parseIntoRecord())
+//                .generationalSetup(CustomGenerationalSetup.builder().maxGenerations(1000).generationSize(1000).mutationIntensity(0.02).crossoverIntensity(0.48).minimalDiversity(0.2).mutationPart(0.3).randomPart(0.6).maxGenerationTime(2).maxGenerationTimeUnit(TimeUnit.SECONDS).build().parseIntoRecord())
 //                .threadFactory(Thread.ofPlatform().factory())
                 .threadFactory(Thread.ofVirtual().factory())
                 .build()

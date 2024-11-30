@@ -1,4 +1,4 @@
-package edu.ryder_czarnecki.engine;
+package edu.ryder_czarnecki.engine.generational_setup;
 
 import org.jetbrains.annotations.Range;
 

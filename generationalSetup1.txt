@@ -1,0 +1,9 @@
+maxGenerations = 2000
+generationSize = 1000
+mutationIntensity = 0.02
+crossoverIntensity = 0.48
+minimalDiversity = 0.2
+mutationPart = 0.3
+randomPart = 0.6
+maxGenerationTime = 2
+maxGenerationTimeUnit = SECONDS
