@@ -1,6 +1,6 @@
 package edu.ryder_czarnecki.process_stack;
 
-import edu.ryder_czarnecki.process.Process;
+import edu.ryder_czarnecki.process.ProcessInstance;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -18,31 +18,31 @@ public class ProcessStack implements Comparable<ProcessStack> {
     @Getter
     @NonNull
     private final String name;
-    private final List<Process> processesStack = new ArrayList<>();
+    private final List<ProcessInstance> processesStack = new ArrayList<>();
 
     @Getter
     private int fullLength = 0;
 
     @Contract(pure = true)
-    public Stream<Process> getProcessesStream() {
+    public Stream<ProcessInstance> getProcessesStream() {
         return processesStack.stream();
     }
 
     @Contract
-    public void addProcess(Process process) {
+    public void addProcess(ProcessInstance process) {
         processesStack.add(process);
         fullLength += process.maxLength();
     }
 
     @Contract
-    public void removeProcess(Process process) {
+    public void removeProcess(ProcessInstance process) {
         processesStack.remove(process);
         fullLength -= process.maxLength();
     }
 
     @Contract
     public void removeProcess(@Range(from = 0, to = Integer.MAX_VALUE) int index) {
-        Process process = processesStack.remove(index);
+        ProcessInstance process = processesStack.remove(index);
         fullLength -= process.maxLength();
 
     }
@@ -70,6 +70,6 @@ public class ProcessStack implements Comparable<ProcessStack> {
 
     @Override
     public String toString() {
-        return "Stack " + name + ": " + processesStack.stream().map(Process::maxLength).toList();
+        return "Stack " + name + ": " + processesStack.stream().map(ProcessInstance::maxLength).toList();
     }
 }

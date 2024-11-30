@@ -1,11 +1,11 @@
-package edu.ryder_czarnecki.instance;
+package edu.ryder_czarnecki.engine.util;
 
 import edu.ryder_czarnecki.process.ProcessInstance;
 
 import java.util.List;
 
-public record DataInstance(
-        int processorsCount,
+public record TemporalInstance(
+        int cMax,
         List<ProcessInstance> processList
 ) {
 }
