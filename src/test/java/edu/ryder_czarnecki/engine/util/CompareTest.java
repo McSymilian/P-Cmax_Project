@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Arrays;
 
 
-import edu.ryder_czarnecki.process.Process;
+import edu.ryder_czarnecki.process.ProcessInstance;
 import edu.ryder_czarnecki.process_manager.GreedyProcessManager;
 import org.junit.jupiter.api.Test;
 
@@ -14,11 +14,11 @@ class CompareTest {
 
     @Test
     void comparison0(){
-        List<Process> listA = Arrays.asList(new Process(4), new Process(3), new Process(2), new Process(1));
+        List<ProcessInstance> listA = Arrays.asList(new ProcessInstance(4), new ProcessInstance(3), new ProcessInstance(2), new ProcessInstance(1));
         GreedyProcessManager processManager = GreedyProcessManager.builder().processorsCount(1).build();
         processManager.addProcesses(listA);
 
-        List<Process> listB = Arrays.asList(new Process(1), new Process(2), new Process(3), new Process(4));
+        List<ProcessInstance> listB = Arrays.asList(new ProcessInstance(1), new ProcessInstance(2), new ProcessInstance(3), new ProcessInstance(4));
         GreedyProcessManager processManager2 = GreedyProcessManager.builder().processorsCount(1).build();
         processManager2.addProcesses(listB);
 
@@ -29,11 +29,11 @@ class CompareTest {
 
     @Test
     void comparison1() {
-        List<Process> listA = Arrays.asList(new Process(1), new Process(2), new Process(3), new Process(4));
+        List<ProcessInstance> listA = Arrays.asList(new ProcessInstance(1), new ProcessInstance(2), new ProcessInstance(3), new ProcessInstance(4));
         GreedyProcessManager processManager = GreedyProcessManager.builder().processorsCount(1).build();
         processManager.addProcesses(listA);
 
-        List<Process> listB = Arrays.asList(new Process(1), new Process(2), new Process(3), new Process(4));
+        List<ProcessInstance> listB = Arrays.asList(new ProcessInstance(1), new ProcessInstance(2), new ProcessInstance(3), new ProcessInstance(4));
         GreedyProcessManager processManager2 = GreedyProcessManager.builder().processorsCount(1).build();
         processManager2.addProcesses(listB);
 
@@ -44,11 +44,11 @@ class CompareTest {
 
     @Test
     void comparison05(){
-        List<Process> listA = Arrays.asList(new Process(1), new Process(2), new Process(4), new Process(3));
+        List<ProcessInstance> listA = Arrays.asList(new ProcessInstance(1), new ProcessInstance(2), new ProcessInstance(4), new ProcessInstance(3));
         GreedyProcessManager processManager = GreedyProcessManager.builder().processorsCount(1).build();
         processManager.addProcesses(listA);
 
-        List<Process> listB = Arrays.asList(new Process(1), new Process(2), new Process(3), new Process(4));
+        List<ProcessInstance> listB = Arrays.asList(new ProcessInstance(1), new ProcessInstance(2), new ProcessInstance(3), new ProcessInstance(4));
         GreedyProcessManager processManager2 = GreedyProcessManager.builder().processorsCount(1).build();
         processManager2.addProcesses(listB);
 
